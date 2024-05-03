@@ -57,18 +57,35 @@ def drop_ch4_columns(df):
     df.drop(columns=ch4_columns, inplace=True)
     return df
 
+def drop_place_id_date(df):
+    # Identify column that contains the word 'Place_ID X Date' in headers
+    pidd_columns = df.columns[df.columns.str.contains('Place_ID X Date')]
+    # Drop column from the DataFrame
+    df.drop(columns=pidd_columns, inplace=True)
+    return df
+
 def standardize_column_names(df):
     # Transform all column headers: convert to lower case and replace spaces with underscores
     df.columns = df.columns.str.lower().str.replace(' ', '_')
     # Display the first few rows of the DataFrame to check the updated column names
     return df
 
+def ordinal_encoding_dates(df_X, df_y):
+    # Sort the DataFrame by the date column
+    df_X = df_X.sort_values(by='date')
+    df_X['date'] = pd.factorize(df_X['date'])[0]
+    df_y = df_y[df_X.index]
+    return df_X.reset_index(drop=True), df_y.reset_index(drop=True)
+
 def preprocessing_df(df_X, df_y):
     df_X = drop_columns(df_X)
     df_X = convert_date_and_extract_components(df_X)
     df_X, df_y = drop_zero_rows(df_X, df_y)
     df_X= drop_ch4_columns(df_X)
+    df_X= drop_place_id_date(df_X)
     df_X = standardize_column_names(df_X)
+    df_X, df_y = ordinal_encoding_dates(df_X, df_y)
+
     # Print the new shape of the dataframe
     print("New dataframe shape:", df_X.shape, df_y.shape)
     return df_X, df_y
