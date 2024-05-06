@@ -1,6 +1,6 @@
 import pandas as pd
 
-# Basic functions for preprocessing data
+# Basic functions for preprocessing the df_train data
 
 def drop_columns(df):
     # Drop specified columns from the dataframe
@@ -64,6 +64,13 @@ def drop_place_id_date(df):
     df.drop(columns=pidd_columns, inplace=True)
     return df
 
+def calculate_mean_angles(df):
+    # Create a new DataFrame with columns containing the words 'sensor_zenith_angle'
+    df_filtered_zenith = df[[col for col in df.columns if 'sensor_zenith_angle' in col]]
+    df_filtered_azimuth = df[[col for col in df.columns if 'sensor_azimuth_angle' in col]]
+    df['mean_zenit_angle'] = df_filtered_zenith.mean(axis=1)
+    df['mean_azimuth_angle'] = df_filtered_azimuth.mean(axis=1)
+
 def standardize_column_names(df):
     # Transform all column headers: convert to lower case and replace spaces with underscores
     df.columns = df.columns.str.lower().str.replace(' ', '_')
@@ -89,5 +96,3 @@ def preprocessing_df(df_X, df_y):
     # Print the new shape of the dataframe
     print("New dataframe shape:", df_X.shape, df_y.shape)
     return df_X, df_y
-
-

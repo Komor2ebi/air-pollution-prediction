@@ -2,26 +2,33 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 
-def plot_residuals(y,y_pred,reg_name,x_limits=None,y_limits=None):
-    # Plotting the residuals
-    residuals = y - y_pred # Calculate residuals
-    
-    plt.figure(figsize=(10, 6))
-    sns.scatterplot(x=y_pred, y=residuals)
-    sns.regplot(x=y_pred, y=residuals,
-                lowess=True, scatter=False, line_kws={'color': 'red', 'lw': 1}) # Add a lowess line using regplot
-    plt.title(f'{reg_name} Regression Residuals')
-    plt.xlabel('Predicted Values')
-    plt.ylabel('Residuals')
-    plt.grid(True)
-    
-    if x_limits != None:
-        plt.xlim(*x_limits) # Set y-axis limits
-    
-    if y_limits != None:
-        plt.ylim(*y_limits) # Set y-axis limits
-        
-    plt.show()
+def error_analysis_plot(y_test, y_pred_test):
+    """Generated true vs. predicted values and residual scatter plot for models
+    Args:
+        y_test (array): true values for y_test
+        y_pred_test (array): predicted values of model for y_test
+    """
+    # Calculate residuals
+    residuals = y_test - y_pred_test
+    # Plot real vs. predicted values
+    fig, ax = plt.subplots(1,2, figsize=(15, 5))
+    plt.subplots_adjust(right=1)
+    sns.regplot(x=y_pred_test, y=residuals,lowess=True, scatter=False, line_kws={'color': 'blue', 'lw': 1}) # Add a lowess line using regplot
+    plt.suptitle('Error Analysis')
+    ax[0].scatter(y_pred_test, y_test, color="#FF5A36", alpha=0.7)
+    ax[0].plot([-400, 350], [-400, 350], color="#193251")
+    ax[0].set_title("True vs. predicted values", fontsize=16)
+    ax[0].set_xlabel("Predicted Values")
+    ax[0].set_ylabel("True Values")
+    ax[0].set_xlim((y_pred_test.min()-10), (y_pred_test.max()+10))
+    ax[0].set_ylim((y_test.min()-40), (y_test.max()+40))
+    ax[1].scatter(y_pred_test, residuals, color="#FF5A36", alpha=0.7)
+    ax[1].plot([-400, 350], [0,0], color="#193251")
+    ax[1].set_title("Residual Scatter Plot", fontsize=16)
+    ax[1].set_xlabel("Predicted Values")
+    ax[1].set_ylabel("Residuals")
+    ax[1].set_xlim((y_pred_test.min()-10), (y_pred_test.max()+10))
+    ax[1].set_ylim((residuals.min()-10), (residuals.max()+10));
     
     return
 
