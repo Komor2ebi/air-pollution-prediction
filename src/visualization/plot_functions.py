@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 
-def error_analysis_plot(y_test, y_pred_test):
+def error_analysis_plot(y_test, y_pred_test, colorcode="#FF5A36"):
     """Generated true vs. predicted values and residual scatter plot for models
     Args:
         y_test (array): true values for y_test
@@ -15,14 +15,14 @@ def error_analysis_plot(y_test, y_pred_test):
     plt.subplots_adjust(right=1)
     sns.regplot(x=y_pred_test, y=residuals,lowess=True, scatter=False, line_kws={'color': 'blue', 'lw': 1}) # Add a lowess line using regplot
     plt.suptitle('Error Analysis')
-    ax[0].scatter(y_pred_test, y_test, color="#FF5A36", alpha=0.7)
+    ax[0].scatter(y_pred_test, y_test, color=colorcode, alpha=0.7)
     ax[0].plot([-400, 350], [-400, 350], color="#193251")
     ax[0].set_title("True vs. predicted values", fontsize=16)
     ax[0].set_xlabel("Predicted Values")
     ax[0].set_ylabel("True Values")
     ax[0].set_xlim((y_pred_test.min()-10), (y_pred_test.max()+10))
     ax[0].set_ylim((y_test.min()-40), (y_test.max()+40))
-    ax[1].scatter(y_pred_test, residuals, color="#FF5A36", alpha=0.7)
+    ax[1].scatter(y_pred_test, residuals, color=colorcode, alpha=0.7)
     ax[1].plot([-400, 350], [0,0], color="#193251")
     ax[1].set_title("Residual Scatter Plot", fontsize=16)
     ax[1].set_xlabel("Predicted Values")
@@ -64,7 +64,7 @@ def plot_most_important_features(model,model_name,number_of_features=20):
 
     # Plotting the top 20 feature importances
     plt.figure(figsize=(10, 10))
-    sorted_features.head(number_of_features).plot(kind='barh', title='Top 20 Feature Importances from Ridge Regression')
+    sorted_features.head(number_of_features).plot(kind='barh', title='Top 20 Feature Importances from Ridge Regression', color="#96c6da")
     plt.xlabel('Absolute Coefficient Value')
     plt.show()
     return

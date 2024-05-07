@@ -68,8 +68,17 @@ def calculate_mean_angles(df):
     # Create a new DataFrame with columns containing the words 'sensor_zenith_angle'
     df_filtered_zenith = df[[col for col in df.columns if 'sensor_zenith_angle' in col]]
     df_filtered_azimuth = df[[col for col in df.columns if 'sensor_azimuth_angle' in col]]
-    df['mean_zenit_angle'] = df_filtered_zenith.mean(axis=1)
-    df['mean_azimuth_angle'] = df_filtered_azimuth.mean(axis=1)
+    df['mean_sensor_zenit_angle'] = df_filtered_zenith.mean(axis=1)
+    df['mean_sensor_azimuth_angle'] = df_filtered_azimuth.mean(axis=1)
+    df.drop(columns=[col for col in df.columns if 'sensor_zenith_angle' in col], inplace=True)
+    df.drop(columns=[col for col in df.columns if 'sensor_azimuth_angle' in col], inplace=True)
+    df_filtered_zenith = df[[col for col in df.columns if 'solar_zenith_angle' in col]]
+    df_filtered_azimuth = df[[col for col in df.columns if 'solar_azimuth_angle' in col]]
+    df['mean_solar_zenit_angle'] = df_filtered_zenith.mean(axis=1)
+    df['mean_solar_azimuth_angle'] = df_filtered_azimuth.mean(axis=1)
+    df.drop(columns=[col for col in df.columns if 'solar_zenith_angle' in col], inplace=True)
+    df.drop(columns=[col for col in df.columns if 'solar_azimuth_angle' in col], inplace=True)
+    return df
 
 def standardize_column_names(df):
     # Transform all column headers: convert to lower case and replace spaces with underscores
@@ -89,6 +98,7 @@ def preprocessing_df(df_X, df_y):
     df_X = convert_date_and_extract_components(df_X)
     df_X, df_y = drop_zero_rows(df_X, df_y)
     df_X = drop_ch4_columns(df_X)
+    df_X = calculate_mean_angles(df_X)
     df_X = drop_place_id_date(df_X)
     df_X = standardize_column_names(df_X)
     df_X, df_y = ordinal_encoding_dates(df_X, df_y)
