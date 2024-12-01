@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import plotly as plt
 from sklearn.metrics import r2_score
 from sklearn.metrics import mean_squared_error, make_scorer
@@ -12,6 +13,41 @@ def print_scores(X, y, y_pred):
     print(f"Root Mean Squared Error: {rmse:.2f}")
     print(f"R^2 Score: {r2:.2f}")
     print(f"Adj. R^2 Score: {r2_adj:.2f}")
+    return rmse
+
+# Initialize the DataFrame with the first entry (Benchmark model: winner of Zindi challenge)
+df_models_rmse = pd.DataFrame([{'Model': 'Benchmark model', 'RMSE': 26.09}])
+
+def print_save_scores(model_name, model, X_train, y_train, y_pred, df):
+     # Calculate test metrics
+    mse = mean_squared_error(y_train, y_pred)
+    rmse = np.sqrt(mse)
+    r2 = r2_score(y_train, y_pred)
+    r2_adj = adjusted_r_squared(r2, X_train)
+    
+    # Print metrics
+    print(f"Model: {model_name}")
+    print(f"Root Mean Squared Error: {rmse:.2f}")
+    print(f"R^2 Score: {r2:.2f}")
+    print(f"Adj. R^2 Score: {r2_adj:.2f}")
+        
+    # Create a new DataFrame to append
+    new_row = pd.DataFrame({'Model': [model_name], 'RMSE': [rmse]})
+    
+    # Concatenate the new row to the existing DataFrame
+    df = pd.concat([df, new_row], ignore_index=True)
+    
+    return df
+
+# Function to calculate and save RMSE to DataFrame
+def save_rmse_from_cv(model_name, y_test, y_test_pred, df):
+    # Calculate RMSE using your custom scorer
+    rmse = rmse_scorer(y_test, y_test_pred)
+    
+    # Append the model name and RMSE to the DataFrame
+    df = pd.concat([df, pd.DataFrame({'Model': [model_name], 'RMSE': [rmse]})], ignore_index=True)
+    
+    return df
 
 # Define function for calculating adjusted r-squared
 def adjusted_r_squared(r2, X):
